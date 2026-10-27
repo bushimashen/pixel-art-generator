@@ -1,51 +1,53 @@
-# 像素画生成器 · Pixel Art Generator
+# Pixel Art Generator · 像素画生成器
 
-> 把任意图片一键转成像素画 / 马赛克装饰画。单个 HTML 文件，零依赖，全部计算在你的浏览器里完成，图片不会上传到任何服务器。
+> Turn any photo into pixel art or a mosaic poster. One HTML file, zero dependencies, all processing happens in your browser — your image never leaves it.
 
 **English** | [简体中文](README.zh-CN.md)
 
-## 特性
+<a href="https://bushimashen.github.io/pixel-art-generator/"><b>▶ Live demo</b></a>
 
-- **10 种风格调色板**：经典像素（自动减色）、复古掌机（四色墨绿）、街机 16 色（PICO-8）、老电脑 CGA、黑白报纸、拼豆色卡（MARD 291）、拼豆全色卡（优肯 415）、霓虹赛博、落日暖调、冰川冷调
-- **像素块数** 16 ~ 512 可调，附头像 32 / 标准 64 / 精细 128 / 挂画 256 / 极致 512 快捷档
-- **颜色数量** 8 ~ 512 色（自动减色与灰阶模式下生效）
-- **亮度 / 对比度** 实时调节
-- **Floyd–Steinberg 抖动**：照片和渐变图开启后过渡明显更自然
-- **导出** 1× / 4× / 8× / 12× / 16× PNG，`imageSmoothingEnabled = false` 保证放大后仍是干净的方块
-- 显示本次实际用到的颜色，方便对照实物（尤其做拼豆参考图时）
-- 支持点击选择、拖拽、**Ctrl+V 粘贴**三种方式导入
+## Features
 
-## 用法
+- **10 style palettes** — classic pixel (auto-quantized), retro handheld (4-color green), arcade 16 (PICO-8), old-PC CGA, monochrome newspaper, perler-bead chart (MARD 291), full perler chart (ARTKAL 415), neon cyberpunk, warm sunset, glacier cool
+- **Pixel grid** adjustable from 16 to 512, with avatar 32 / standard 64 / detailed 128 / poster 256 / extreme 512 presets
+- **Color count** from 8 to 512 (used by the auto-quantize and grayscale modes)
+- **Brightness / contrast** adjustable in real time
+- **Floyd–Steinberg dithering** — photos and gradients blend far more naturally with it on
+- **Export** at 1× / 4× / 8× / 12× / 16× PNG with `imageSmoothingEnabled = false`, so upscaled output stays crisp blocks
+- Shows the colors actually used, handy when matching real materials (especially for perler-bead references)
+- Import via click, drag-and-drop, or **Ctrl+V paste**
 
-直接双击 `index.html` 用浏览器打开即可，不需要安装任何东西，也不需要联网。
+## Usage
 
-如果你更习惯用本地服务：
+Double-click `index.html`. No installation, no build, no network.
+
+Prefer a local server?
 
 ```bash
 python -m http.server 8000
-# 然后打开 http://localhost:8000
+# then open http://localhost:8000
 ```
 
-## 算法说明
+## Algorithm
 
-1. **缩放**：原图用 canvas 双三次插值缩到目标格数，天然起到区域平均 / 抗锯齿作用
-2. **亮度对比度**：对比度用 `cf = 259 * (c + 255) / (255 * (259 - c))` 的经典因子
-3. **调色板**：
-   - `auto` 自动减色 —— 按 4bit/通道做直方图，取出现次数最多的前 K 个桶，各桶取均值色
-   - `gray` K 级灰阶，均匀铺满 0~255
-   - 其余为固定调色板
-4. **映射**：redmean 加权距离找最近色（比裸 RGB 距离更贴近人眼），并用精确 RGB 缓存加速
-5. **抖动**（可选）：Floyd–Steinberg 误差扩散 7/16、3/16、5/16、1/16
+1. **Downscale** — the source is drawn to canvas at the target grid size with bicubic interpolation, which already acts as area averaging / antialiasing.
+2. **Brightness and contrast** — contrast uses the classic factor `cf = 259 * (c + 255) / (255 * (259 - c))`.
+3. **Palette**:
+   - `auto` quantization — builds a histogram at 4 bits per channel, keeps the top-K buckets and averages each one
+   - `gray` — K evenly spaced levels across 0–255
+   - everything else is a fixed palette
+4. **Mapping** — nearest color by redmean-weighted distance (closer to human perception than plain RGB), cached by exact RGB for speed.
+5. **Dithering** (optional) — Floyd–Steinberg error diffusion at 7/16, 3/16, 5/16, 1/16.
 
-## 关于色卡数据
+## About the color data
 
-内置的 **MARD 291 色** 与 **优肯（ARTKAL）415 色** 拼豆色卡来自开源项目
-[Pindo](https://github.com/LunarXuan/Pindo) 与 [pindou-color-data](https://github.com/HansBug/pindou-color-data)
-整理的社区色卡（各品牌官方不发布 HEX 值，色值为社区校对结果）。
+The built-in **MARD 291** and **ARTKAL 415** perler bead charts come from community-maintained datasets in
+[Pindo](https://github.com/LunarXuan/Pindo) and [pindou-color-data](https://github.com/HansBug/pindou-color-data)
+(brands do not publish official HEX values; these are community-verified approximations).
 
-因此本项目采用 **GPL-3.0**，与上游色卡数据的许可保持一致 —— 详见 [LICENSE](LICENSE)。
+Because of that, this project is licensed **GPL-3.0**, matching the upstream data — see [LICENSE](LICENSE).
 
-## 许可
+## License
 
-GPL-3.0（因内置拼豆色卡数据源自 GPL-3.0 项目）。代码部分你可以自由使用与修改，
-转发或二次发布时请保留相同许可与上游署名。
+GPL-3.0 (the bundled perler color charts originate from GPL-3.0 projects). You are free to use and modify the code;
+if you redistribute it, keep the same license and credit the upstream data sources.
